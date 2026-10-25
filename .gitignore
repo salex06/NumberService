@@ -32,3 +32,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### env files ###
+.env
+
+### temp files ###
+**/old/**
