@@ -46,10 +46,10 @@ public class JwtService {
         );
 
         return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(subject)
-                .setIssuedAt(new Date())
-                .setExpiration(expiryDate)
+                .claims(claims)
+                .subject(subject)
+                .issuedAt(new Date())
+                .expiration(expiryDate)
                 .signWith(secretKey)
                 .compact();
     }
@@ -63,11 +63,11 @@ public class JwtService {
     }
 
     private Claims extractClaims(String bearerToken) {
-        return Jwts.parserBuilder()
-                .setSigningKey(secretKey)
+        return Jwts.parser()
+                .verifyWith(secretKey)
                 .build()
-                .parseClaimsJws(bearerToken)
-                .getBody();
+                .parseSignedClaims(bearerToken)
+                .getPayload();
     }
 
     private boolean isTokenExpired(String bearerToken) {

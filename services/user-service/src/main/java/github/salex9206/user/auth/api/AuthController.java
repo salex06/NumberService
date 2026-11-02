@@ -1,8 +1,8 @@
 package github.salex9206.user.auth.api;
 
 import github.salex9206.user.auth.api.dto.*;
-import github.salex9206.user.auth.service.UserRegistrationService;
 import github.salex9206.user.auth.service.TokenService;
+import github.salex9206.user.auth.service.UserRegistrationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -11,6 +11,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,8 +37,10 @@ public class AuthController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("/api/auth/login")
-    public TokenResponse login(@Valid @RequestBody TokenRequest loginRequest) {
-        return tokenService.generateToken(loginRequest);
+    public ResponseEntity<?> login(@Valid @RequestBody TokenRequest loginRequest) {
+        TokenResponse resp = tokenService.generateToken(loginRequest);
+
+        return new ResponseEntity<>(resp, HttpStatus.OK);
     }
 
     @Operation(
@@ -50,7 +54,8 @@ public class AuthController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("/api/auth/register")
-    public RegistrationResponse register(@Valid @RequestBody RegistrationRequest registrationRequest) {
-        return userRegistrationService.register(registrationRequest);
+    public ResponseEntity<?> register(@Valid @RequestBody RegistrationRequest registrationRequest) {
+        RegistrationResponse resp = userRegistrationService.register(registrationRequest);
+        return new ResponseEntity<>(resp, HttpStatus.CREATED);
     }
 }
