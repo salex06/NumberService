@@ -4,10 +4,11 @@ FROM maven:3.9-eclipse-temurin-21 AS build
 # Установка текущей рабочей директории
 WORKDIR /workspace
 
-# Копирование pom-файлов (корневой + сервиса + общий)
+# Копирование pom-файлов
 COPY pom.xml .
 COPY services/user-service/pom.xml services/user-service/pom.xml
 COPY platform/pom.xml platform/pom.xml
+COPY services/api-gateway/pom.xml services/api-gateway/pom.xml
 
 # Скачивание зависимостей
 RUN mvn -B -q -pl services/user-service -am dependency:go-offline
