@@ -15,7 +15,7 @@ public class OpenApiConfig {
     @Bean
     public OpenAPI openApi() {
         return new OpenAPI()
-                .servers(List.of(new Server().url("/user-service")))
+                .servers(List.of(new Server().url("/")))
                 .components(new Components().addSecuritySchemes("bearerAuth",
                         new SecurityScheme()
                                 .type(SecurityScheme.Type.HTTP)

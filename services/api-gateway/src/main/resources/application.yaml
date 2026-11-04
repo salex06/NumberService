@@ -4,10 +4,15 @@ spring:
       server:
         webmvc:
           routes:
-            - id: user-service
+            - id: user-service-auth
               uri: http://user-service:${USER_SERVICE_PORT:-8080}
               predicates:
-                - Path=/user-service/api/auth/**,/user-service/v3/api-docs/**
+                - Path=/api/auth/**
+
+            - id: user-service-api-docs
+              uri: http://user-service:${USER_SERVICE_PORT:-8080}
+              predicates:
+                - Path=/user-service/v3/api-docs/**
               filters:
                 - StripPrefix=1
 
@@ -22,8 +27,3 @@ springdoc:
     urls:
       - name: user-service
         url: /user-service/v3/api-docs
-
-
-logging:
-  level:
-    org.springframework.security: TRACE
