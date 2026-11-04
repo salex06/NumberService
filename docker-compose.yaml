@@ -4,13 +4,23 @@ services:
     build:
       context: .
       dockerfile: services/user-service/.Dockerfile
-    ports:
-      - '${USER_SERVICE_PORT:-8080}:${USER_SERVICE_HOST_PORT:-8080}'
+    expose:
+      - '${USER_SERVICE_PORT:-8080}'
     env_file:
       - .env
     depends_on:
       postgres:
         condition: service_healthy
+
+  api-gateway:
+    container_name: 'number-platform_api-gateway'
+    build:
+      context: .
+      dockerfile: services/api-gateway/.Dockerfile
+    ports:
+      - '${API_GATEWAY_HOST_PORT:-8081}:${API_GATEWAY_PORT:-8080}'
+    env_file:
+      - .env
 
   postgres:
     image: 'postgres:15-alpine'
