@@ -41,6 +41,13 @@
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
         </dependency>
+
+        <!-- Common components -->
+        <dependency>
+            <groupId>github.salex9206</groupId>
+            <artifactId>platform</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

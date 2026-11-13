@@ -16,6 +16,20 @@ spring:
               filters:
                 - StripPrefix=1
 
+            - id: number-service-api
+              uri: http://number-service:${NUMBER_SERVICE_PORT:-8080}
+              predicates:
+                - Path=/api/numbers, /api/numbers/**
+
+            - id: number-service-api-docs
+              uri: http://number-service:${NUMBER_SERVICE_PORT:-8080}
+              predicates:
+                - Path=/number-service/v3/api-docs/**
+              filters:
+                - StripPrefix=1
+
+
+
 app:
   secret-key: ${JWT_SECRET}
 
@@ -27,3 +41,6 @@ springdoc:
     urls:
       - name: user-service
         url: /user-service/v3/api-docs
+
+      - name: number-service
+        url: /number-service/v3/api-docs
