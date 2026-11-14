@@ -1,4 +1,4 @@
-package github.salex9206.config;
+package github.salex9206.gateway.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
