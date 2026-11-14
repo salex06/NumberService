@@ -52,12 +52,11 @@ public class UserRegistrationService {
             );
 
         return RegistrationResponse.builder()
-                .result(true)
+                .userId(id)
                 .build();
     }
 
     private UserProfileShared convertToUserProfile(UUID userId, RegistrationRequest.ProfileInfo profileInfo) {
-
         return UserProfileShared.builder()
                 .userId(userId)
                 .name(profileInfo.getName())

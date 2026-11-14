@@ -3,6 +3,7 @@ package github.salex9206.user.auth.service;
 import github.salex9206.user.auth.domain.User;
 import github.salex9206.user.auth.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.NonNull;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -18,7 +19,7 @@ public class AuthUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(@NonNull String username) throws UsernameNotFoundException {
         return userRepository.findUserByUsername(username)
                 .map(this::toUserDetails)
                 .orElseThrow(() -> new UsernameNotFoundException(
@@ -30,7 +31,8 @@ public class AuthUserDetailsService implements UserDetailsService {
         return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getUsername())
                 .password(user.getPasswordHash())
-                .authorities(new ArrayList<>()) // TODO: authorities
+                .authorities(new ArrayList<>())
+                // TODO: .authorities(user.getRoles().stream().map(r -> new SimpleGrantedAuthority("ROLE_" + r.getName())).toList());
                 .build();
     }
 }

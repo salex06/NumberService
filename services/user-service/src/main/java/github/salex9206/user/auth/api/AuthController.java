@@ -1,6 +1,10 @@
 package github.salex9206.user.auth.api;
 
-import github.salex9206.user.auth.api.dto.*;
+import github.salex9206.shared.web.error.ErrorResponse;
+import github.salex9206.user.auth.api.dto.RegistrationRequest;
+import github.salex9206.user.auth.api.dto.RegistrationResponse;
+import github.salex9206.user.auth.api.dto.TokenRequest;
+import github.salex9206.user.auth.api.dto.TokenResponse;
 import github.salex9206.user.auth.service.TokenService;
 import github.salex9206.user.auth.service.UserRegistrationService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,7 +30,8 @@ public class AuthController {
 
     @Operation(
             summary = "Получить JWT по логину и паролю",
-            description = "Проверяет credentials и возвращает access-токен. "
+            description = "Проверяет credentials и возвращает access-токен. ",
+            security = {}
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Токен успешно выдан",
@@ -45,10 +50,11 @@ public class AuthController {
 
     @Operation(
             summary = "Зарегистрировать пользователя",
-            description = "Получает данные пользователя, проверяет уникальность и сохраняет в БД"
+            description = "Получает данные пользователя, проверяет уникальность и сохраняет в БД",
+            security = {}
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Пользователь успешно зарегистрирован",
+            @ApiResponse(responseCode = "201", description = "Пользователь успешно зарегистрирован",
                     content = @Content(schema = @Schema(implementation = RegistrationRequest.class))),
             @ApiResponse(responseCode = "400", description = "Некорректный запрос (пустые поля)",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))

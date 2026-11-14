@@ -1,30 +1,28 @@
 package github.salex9206.user.auth.config;
 
-import github.salex9206.user.auth.security.JwtAuthenticationFilter;
+import github.salex9206.shared.auth.principal.UserPrincipalConverter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.access.AccessDeniedHandler;
 
 @Configuration
 @RequiredArgsConstructor
+@Import(UserPrincipalConverter.class)
 public class SecurityFilterConfig {
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    // 401 (Unauthorized) handler
     private final AuthenticationEntryPoint restAuthenticationEntryPoint;
+    // 403 (Forbidden) handler
+    private final AccessDeniedHandler accessDeniedHandler;
 
-    @Bean
-    public FilterRegistrationBean<JwtAuthenticationFilter> jwtFilterRegistration(JwtAuthenticationFilter filter) {
-        FilterRegistrationBean<JwtAuthenticationFilter> reg = new FilterRegistrationBean<>(filter);
-        reg.setEnabled(false);
-        return reg;
-    }
+    private final UserPrincipalConverter userPrincipalConverter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) {
@@ -43,9 +41,15 @@ public class SecurityFilterConfig {
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .oauth2ResourceServer(oauth -> oauth
+                        .jwt(jwt -> jwt.jwtAuthenticationConverter(
+                                userPrincipalConverter.customJwtAuthenticationConverter()))
+                        .authenticationEntryPoint(restAuthenticationEntryPoint)
+                        .accessDeniedHandler(accessDeniedHandler)
+                )
                 .exceptionHandling(e -> e
                         .authenticationEntryPoint(restAuthenticationEntryPoint)
+                        .accessDeniedHandler(accessDeniedHandler)
                 );
 
         return http.build();

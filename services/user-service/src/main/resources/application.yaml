@@ -1,6 +1,6 @@
 spring:
   application:
-    name: auth_service
+    name: user_service
   liquibase:
     enabled: false                    # Отдельно запускаемый контейнер
   datasource:

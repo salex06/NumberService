@@ -7,6 +7,7 @@ WORKDIR /workspace
 # Копирование pom-файлов
 COPY pom.xml .
 COPY services/user-service/pom.xml services/user-service/pom.xml
+COPY services/number-service/pom.xml services/number-service/pom.xml
 COPY platform/pom.xml platform/pom.xml
 COPY services/api-gateway/pom.xml services/api-gateway/pom.xml
 
@@ -14,6 +15,7 @@ COPY services/api-gateway/pom.xml services/api-gateway/pom.xml
 RUN mvn -B -q -pl services/user-service -am dependency:go-offline
 
 # Копирование исходников
+COPY platform/src platform/src
 COPY services/user-service/src services/user-service/src
 
 # Сборка модуля и зависимостей
