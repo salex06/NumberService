@@ -11,6 +11,7 @@ COPY services/api-gateway/pom.xml services/api-gateway/pom.xml
 
 RUN mvn -B -q -pl services/api-gateway -am dependency:go-offline
 
+COPY platform/src platform/src
 COPY services/api-gateway/src services/api-gateway/src
 
 RUN mvn -B -q -pl services/api-gateway -am package -DskipTests
