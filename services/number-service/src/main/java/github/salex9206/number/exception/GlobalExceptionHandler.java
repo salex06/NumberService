@@ -9,9 +9,18 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidNumberException.class)
-    public ResponseEntity<ErrorResponse> handleInvalidNumber(InvalidNumberException e) {
-        ErrorResponse resp = new ErrorResponse(HttpStatus.UNPROCESSABLE_CONTENT.value(), e.getMessage());
+    public ResponseEntity<?> handleInvalidNumber(InvalidNumberException e) {
+        return handle(e.getMessage(), HttpStatus.UNPROCESSABLE_CONTENT);
+    }
 
-        return ResponseEntity.unprocessableContent().body(resp);
+    @ExceptionHandler(NumberNotFoundException.class)
+    public ResponseEntity<?> handleNumberNotFound(NumberNotFoundException e) {
+        return handle(e.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    private ResponseEntity<?> handle(String message, HttpStatus code) {
+        ErrorResponse resp = new ErrorResponse(code.value(), message);
+
+        return new ResponseEntity<>(resp, code);
     }
 }

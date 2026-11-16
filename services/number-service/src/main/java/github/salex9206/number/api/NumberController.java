@@ -1,6 +1,9 @@
 package github.salex9206.number.api;
 
-import github.salex9206.number.api.dto.*;
+import github.salex9206.number.api.dto.AddNumberRequest;
+import github.salex9206.number.api.dto.AddNumberResult;
+import github.salex9206.number.api.dto.GetAllNumbersResult;
+import github.salex9206.number.api.dto.GetSingleNumberResult;
 import github.salex9206.number.service.NumberService;
 import github.salex9206.shared.auth.principal.UserPrincipal;
 import jakarta.validation.Valid;
@@ -8,10 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -35,5 +35,10 @@ public class NumberController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @GetMapping("/api/numbers/by-e164/{e164}")
+    public ResponseEntity<?> getByE164(@PathVariable("e164") String e164) {
+        GetSingleNumberResult result = numberService.getNumberByE164(e164);
 
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
 }

@@ -4,6 +4,7 @@ import github.salex9206.number.api.dto.*;
 import github.salex9206.number.domain.ParsedNumber;
 import github.salex9206.number.domain.PhoneNumber;
 import github.salex9206.number.domain.enums.VerdictStatus;
+import github.salex9206.number.exception.NumberNotFoundException;
 import github.salex9206.number.repository.PhoneNumberRepository;
 import github.salex9206.number.utils.PhoneNumberNormalizer;
 import github.salex9206.number.utils.converter.NumberDetailsConverter;
@@ -77,5 +78,15 @@ public class NumberService {
 
 
         return AddNumberResult.created(NumberDetailsConverter.toDetails(created));
+    }
+
+    public GetSingleNumberResult getNumberByE164(String e164) {
+        var phoneNumber = phoneNumberRepository.findByE164Number(e164).orElseThrow(
+                () -> new NumberNotFoundException(
+                        String.format("Not found number with e164=%s", e164)
+                )
+        );
+
+        return new GetSingleNumberResult(NumberDetailsConverter.toDetails(phoneNumber));
     }
 }
