@@ -1,0 +1,1 @@
+ALTER TYPE number_status_enum ADD VALUE 'PENDING_HLR';

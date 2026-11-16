@@ -25,7 +25,8 @@
 		<module>services/user-service</module>
 		<module>platform</module>
 		<module>services/api-gateway</module>
-	</modules>
+        <module>services/number-service</module>
+    </modules>
 	<scm>
 		<connection/>
 		<developerConnection/>
