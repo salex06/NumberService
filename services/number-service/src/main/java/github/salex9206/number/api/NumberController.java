@@ -18,16 +18,6 @@ import org.springframework.web.bind.annotation.*;
 public class NumberController {
     private final NumberService numberService;
 
-    @PostMapping("/api/numbers")
-    public ResponseEntity<?> create(
-            @Valid @RequestBody AddNumberRequest request,
-            @AuthenticationPrincipal UserPrincipal principal
-    ) {
-        AddNumberResult result = numberService.addNumber(request, principal);
-
-        return new ResponseEntity<>(result, HttpStatus.OK);
-    }
-
     @GetMapping("/api/numbers")
     public ResponseEntity<?> getAll() {
         GetAllNumbersResult result = numberService.getAllNumbers();
@@ -40,5 +30,23 @@ public class NumberController {
         GetSingleNumberResult result = numberService.getNumberByE164(e164);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @PostMapping("/api/numbers")
+    public ResponseEntity<?> create(
+            @Valid @RequestBody AddNumberRequest request,
+            @AuthenticationPrincipal UserPrincipal principal
+    ) {
+        AddNumberResult result = numberService.addNumber(request, principal);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    // Soft delete ONLY for MODERATOR or ADMIN roles
+    @DeleteMapping("/api/numbers/{id}")
+    public ResponseEntity<?> softDelete(@PathVariable("id") String id) {
+        numberService.softDeleteById(id);
+
+        return ResponseEntity.noContent().build();
     }
 }

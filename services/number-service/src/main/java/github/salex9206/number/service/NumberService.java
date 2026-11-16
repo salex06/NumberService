@@ -16,6 +16,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +27,7 @@ public class NumberService {
     private final TransactionTemplate transactionTemplate;
 
     public GetAllNumbersResult getAllNumbers(/*TODO: UserPrincipal principal*/) {
-        var numbers = phoneNumberRepository.findAll();
+        var numbers = phoneNumberRepository.findAllByStatusNotIn(List.of(PhoneNumber.NumberStatus.DELETED));
 
         List<NumberDetails> details = new ArrayList<>();
         numbers.forEach(number -> {
@@ -88,5 +89,26 @@ public class NumberService {
         );
 
         return new GetSingleNumberResult(NumberDetailsConverter.toDetails(phoneNumber));
+    }
+
+    public void softDeleteById(String id) {
+        Supplier<? extends RuntimeException> notFoundException = () -> new NumberNotFoundException(
+                String.format("Not found number with id=%s", id)
+        );
+
+        // Extract UUID
+        UUID uuid;
+        try {
+            uuid = UUID.fromString(id);
+        } catch (IllegalArgumentException ex) {
+            throw notFoundException.get();
+        }
+
+        // Find phone number
+        var phoneNumber = phoneNumberRepository.findById(uuid).orElseThrow(notFoundException);
+
+        // Update phone number
+        phoneNumber.setStatus(PhoneNumber.NumberStatus.DELETED);
+        phoneNumberRepository.save(phoneNumber);
     }
 }
