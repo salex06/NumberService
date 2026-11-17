@@ -12,7 +12,12 @@ import java.util.UUID;
 
 @Entity
 @Getter
-@Table(name = "number_ratings")
+@Table(name = "number_ratings", uniqueConstraints = {
+        @UniqueConstraint(
+                name = "ux_rating_user_number",
+                columnNames = {"number_id", "user_id"}
+        )
+})
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -29,6 +34,7 @@ public class PhoneNumberRating {
     @Min(1)
     @Max(5)
     @Column(name = "score", nullable = false)
+    @Setter
     private Short score;
 
     @Generated(event = EventType.INSERT)
