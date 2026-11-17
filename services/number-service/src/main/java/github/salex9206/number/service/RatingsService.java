@@ -42,6 +42,7 @@ public class RatingsService {
         int prevScore = rating.getScore() == null ? 0 : rating.getScore();
 
         // Обновляем агрегированные метрики для номера и сохраняем номер
+        // TODO: это должно делаться в отдельном воркере
         recalcPhoneNumberMetrics(number, score, prevScore);
         phoneNumberRepository.save(number);
 
@@ -54,6 +55,32 @@ public class RatingsService {
         return new GetSingleNumberResult(
                 NumberDetailsConverter.toDetails(number)
         );
+    }
+
+    @Transactional
+    public void deleteScore(String numberId, String userId) {
+        // Конвертируем идентификаторы в UUID TODO: handle invalid ids
+        final UUID numberUUID = UUID.fromString(numberId);
+        final UUID userUUID = UUID.fromString(userId);
+
+        // Получаем номер по numberId
+        // TODO: пересчёт метрик в отдельном сервисе
+        PhoneNumber number = phoneNumberRepository.findById(numberUUID).orElseThrow(
+                () -> new NumberNotFoundException(
+                        String.format("Not found number with id=%s", numberId)
+                )
+        );
+
+        var numberRating = phoneNumberRatingRepository.findByUserIdAndNumberId(userUUID, numberUUID);
+        if (numberRating.isPresent()) {
+            int ratingsCount = number.getRatingsCount();
+            long ratingsSum = number.getRatingSum();
+
+            number.setRatingSum(ratingsSum - numberRating.get().getScore());
+            number.setRatingsCount(ratingsCount - 1);
+
+            phoneNumberRatingRepository.deleteByUserIdAndNumberId(userUUID, numberUUID);
+        }
     }
 
     private PhoneNumberRating newRating(UUID numberId, UUID userId) {
