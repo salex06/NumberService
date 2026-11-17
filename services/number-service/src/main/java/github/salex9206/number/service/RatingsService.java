@@ -1,6 +1,7 @@
 package github.salex9206.number.service;
 
 import github.salex9206.number.api.dto.GetSingleNumberResult;
+import github.salex9206.number.api.dto.NumberStat;
 import github.salex9206.number.api.dto.SetScoreRequest;
 import github.salex9206.number.domain.PhoneNumber;
 import github.salex9206.number.domain.PhoneNumberRating;
@@ -12,6 +13,9 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -19,6 +23,43 @@ import java.util.UUID;
 public class RatingsService {
     private final PhoneNumberRatingRepository phoneNumberRatingRepository;
     private final PhoneNumberRepository phoneNumberRepository;
+
+    public NumberStat getNumberStat(String numberId, String userId) {
+        // Конвертируем идентификаторы в UUID TODO: handle invalid ids
+        final UUID numberUUID = UUID.fromString(numberId);
+        final UUID userUUID = UUID.fromString(userId);
+
+        // Получаем номер по numberId
+        PhoneNumber number = phoneNumberRepository.findById(numberUUID).orElseThrow(
+                () -> new NumberNotFoundException(
+                        String.format("Not found number with id=%s", numberId)
+                )
+        );
+
+        // Получаем распределение оценок
+        List<Short> availableScores = List.of(
+                (short) 1, (short) 2, (short) 3, (short) 4, (short) 5
+        );
+        Map<Short, Long> distribution = new HashMap<>();
+        for (var score: availableScores) {
+            distribution.put(score, phoneNumberRatingRepository.countByScore(score));
+        }
+
+        // Получаем оценку пользователя, отправившего запрос
+        var rating = phoneNumberRatingRepository.findByUserIdAndNumberId(
+                userUUID, numberUUID
+        );
+        short ownScore = 0;
+        if (rating.isPresent())
+            ownScore = rating.get().getScore();
+
+        return NumberStat.builder()
+                .average(1.0 * number.getRatingSum() / number.getRatingsCount())
+                .count(number.getRatingsCount())
+                .distribution(distribution)
+                .myRating(ownScore)
+                .build();
+    }
 
     @Transactional
     public GetSingleNumberResult setScore(SetScoreRequest req, String numberId, String userId) {

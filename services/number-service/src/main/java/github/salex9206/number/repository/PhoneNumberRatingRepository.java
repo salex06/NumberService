@@ -7,6 +7,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface PhoneNumberRatingRepository extends JpaRepository<PhoneNumberRating, UUID> {
+    Long countByScore(int score);
+
     Optional<PhoneNumberRating> findByUserIdAndNumberId(UUID userId, UUID numberId);
+
     void deleteByUserIdAndNumberId(UUID userId, UUID numberId);
 }
