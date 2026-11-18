@@ -4,12 +4,14 @@ FROM maven:3.9-eclipse-temurin-21 AS build
 WORKDIR /workspace
 
 COPY pom.xml .
+COPY services/number-service/pom.xml services/number-service/pom.xml
 COPY services/user-service/pom.xml services/user-service/pom.xml
 COPY platform/pom.xml platform/pom.xml
 COPY services/api-gateway/pom.xml services/api-gateway/pom.xml
 
 RUN mvn -B -q -pl services/api-gateway -am dependency:go-offline
 
+COPY platform/src platform/src
 COPY services/api-gateway/src services/api-gateway/src
 
 RUN mvn -B -q -pl services/api-gateway -am package -DskipTests

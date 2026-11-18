@@ -72,7 +72,7 @@ class UserRegistrationServiceTest {
         RegistrationResponse response = service.register(createValidRequest());
 
         assertThat(response).isNotNull();
-        assertThat(response.isResult()).isTrue();
+        assertThat(response.getUserId()).isNotNull();
     }
 
     @Test

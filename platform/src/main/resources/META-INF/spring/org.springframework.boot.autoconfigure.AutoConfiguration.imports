@@ -1,0 +1,2 @@
+github.salex9206.shared.auth.token.decoder.JwtDecoderAutoConfiguration
+github.salex9206.shared.web.RestSecurityAutoConfiguration

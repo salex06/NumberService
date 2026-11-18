@@ -1,4 +1,17 @@
 services:
+  number-service:
+    container_name: 'number-platform_number-service'
+    build:
+      context: .
+      dockerfile: services/number-service/.Dockerfile
+    expose:
+      - '${NUMBER_SERVICE_PORT:-8080}'
+    env_file:
+      - .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+
   user-service:
     container_name: 'number-platform_user-service'
     build:
