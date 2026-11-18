@@ -12,5 +12,6 @@
     <include file="005-number-service-triggers.sql" relativeToChangelogFile="true"/>
     <include file="006-number-service-scoring.sql" relativeToChangelogFile="true"/>
     <include file="007-number-service-update-status-enum.sql" relativeToChangelogFile="true"/>
+    <include file="008-hlr-service-init.sql" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>
